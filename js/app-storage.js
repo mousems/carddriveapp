@@ -2,27 +2,33 @@ var LOCAL = {
     cards: [
         {
             type: 'cash',
-            name: 'Cash',
-            cashback_per    : 0,
-            foreign_fee_per : 0
+            name: '郭杰穎',
+            field_lastname    : '郭',
+            field_firstname : '杰穎',
+            field_phone : '0975179763',
+            field_addressCountry : 'Taiwan',
+            field_addressZIP : '10699',
+            field_addressCity : 'Taipei',
+            field_addressTownship : 'Daan',
+            field_addressStreet : 'P.OBOX 90-36'
         }
     ],
     currency: {
-        visa: {
+        '路人甲': {
             EUR: {
                 NTD: 1
             },
             date: null,
             server_date: null
         },
-        mastercard: {
+        '路人乙': {
             EUR: {
                 NTD: 1
             },
             date: null,
             server_date: null
         },
-        cash: {
+        '路人丙': {
             EUR: {
                 NTD: 1
             }
@@ -93,5 +99,5 @@ var refresh_currency = function(btn_obj) {
 }
 
 $(function(){
-    refresh_currency();
+    // refresh_currency();
 });

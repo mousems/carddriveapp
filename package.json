@@ -1,5 +1,5 @@
 {
-  "name": "payWhichClient",
+  "name": "CarddriveApp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jeremy5189/payWhichClient.git"
+    "url": "https://github.com/mousems/CarddriveApp.git"
   },
   "author": "Jeremy Yen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jeremy5189/payWhichClient/issues"
+    "url": "https://github.com/mousems/CarddriveApp/issues"
   },
-  "homepage": "https://github.com/jeremy5189/payWhichClient"
+  "homepage": "https://github.com/mousems/CarddriveApp"
 }
