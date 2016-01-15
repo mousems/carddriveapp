@@ -1,41 +1,85 @@
 var LOCAL = {
-    cards: [
-        {
-            type: 'cash',
-            name: '郭杰穎',
-            field_lastname    : '郭',
-            field_firstname : '杰穎',
-            field_phone : '0975179763',
-            field_addressCountry : 'Taiwan',
-            field_addressZIP : '10699',
-            field_addressCity : 'Taipei',
-            field_addressTownship : 'Daan',
-            field_addressStreet : 'P.OBOX 90-36'
-        }
-    ],
-    currency: {
-        '路人甲': {
-            EUR: {
-                NTD: 1
-            },
-            date: null,
-            server_date: null
-        },
-        '路人乙': {
-            EUR: {
-                NTD: 1
-            },
-            date: null,
-            server_date: null
-        },
-        '路人丙': {
-            EUR: {
-                NTD: 1
-            }
-        }
+    me:{
+            // name: '郭杰穎',
+            // email: 'mousems.kuo@gmail.com',
+            // field_lastname : {
+            //     value:'郭',
+            //     id:''
+            // },
+            // field_firstname : {
+            //     value:'杰穎',
+            //     id:''
+            // },
+            // field_phone : {
+            //     value:'0975179763',
+            //     id:''
+            // },
+            // field_addressCountry : {
+            //     value:'Taiwan',
+            //     id:''
+            // },
+            // field_addressZIP : {
+            //     value:'10699',
+            //     id:''
+            // },
+            // field_addressCity : {
+            //     value:'Taipei',
+            //     id:''
+            // },
+            // field_addressTownship : {
+            //     value:'Daan',
+            //     id:''
+            // },
+            // field_addressStreet : {
+            //     value:'P.OBOX 90-36',
+            //     id:''
+            // },
+            // modifiedDate : null
+    },
+    contacts: {
+        // abc:{
+        //     name: '郭杰穎',
+        //     email: 'mousems.kuo@gmail.com',
+        //     field_lastname : {
+        //         value:'郭',
+        //         id:''
+        //     },
+        //     field_firstname : {
+        //         value:'杰穎',
+        //         id:''
+        //     },
+        //     field_phone : {
+        //         value:'0975179763',
+        //         id:''
+        //     },
+        //     field_addressCountry : {
+        //         value:'Taiwan',
+        //         id:''
+        //     },
+        //     field_addressZIP : {
+        //         value:'10699',
+        //         id:''
+        //     },
+        //     field_addressCity : {
+        //         value:'Taipei',
+        //         id:''
+        //     },
+        //     field_addressTownship : {
+        //         value:'Daan',
+        //         id:''
+        //     },
+        //     field_addressStreet : {
+        //         value:'P.OBOX 90-36',
+        //         id:''
+        //     },
+        //     modifiedDate : null
+        // }
     },
     settings: {
         decimal: 'on'
+    },
+    varb: {
+        lastupdate: 0
     }
 };
 

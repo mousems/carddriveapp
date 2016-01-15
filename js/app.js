@@ -1,22 +1,6 @@
 var TRANS = {
-    int_currency : '國際組織匯率',
-    foreign_fee  : '跨國手續',
-    local_val    : '本次交易金額',
-    cashback_val : '現金回饋',
-    gain_val     : '淨回饋收入',
-    actual_val   : '實際支付金額',
-    type         : '卡別',
-    cashback_per    : '現金回饋率(%)',
-    foreign_fee_per : '海外交易手續費率(%)',
-    opr             : '操作',
-    delete          : '刪除',
-    cards           : '本人',
-    currency        : '聯絡人',
-    visa            : 'Visa',
-    mastercard      : 'MasterCard',
-    cash            : '現金',
-    date            : '國際組織匯率日期',
-    server_date     : '伺服器更新時間',
+    me           : '本人',
+    contact        : '聯絡人',
     field_lastname  : '姓',
     field_firstname  : '名',
     field_phone : '電話號碼',
@@ -39,87 +23,54 @@ var refresh_decimal = function() {
 
 };
 
-var display_overview = function() {
+var refresh_cards = function() {
 
     var card_array   = [];
 
-    console.log(LOCAL.cards);
-    // Card record
-    for( var card_index in LOCAL.cards ) {
-
-        var detail_array = [];
-
-        for( var key in LOCAL.cards[card_index] ) {
-
-            if( key != 'name' && key != 'type' ) {
-                detail_array.push({
-                    title: TRANS[key],
-                    note : '',
-                    value: LOCAL.cards[card_index][key] == null ? '-' : LOCAL.cards[card_index][key]
-                });
-            }
+    var detail_array = [];
+    for(var me_key in LOCAL.me) {
+        if(me_key.match(/^field/)) {
+            detail_array.push({
+                title: TRANS[me_key],
+                note : '',
+                value: LOCAL.me[me_key].value == null ? '-' : LOCAL.me[me_key].value
+            });
         }
-        //
-        // if( LOCAL.cards[card_index].type != 'cash' ) {
-        //     detail_array.push({
-        //         title: TRANS['opr'],
-        //         note : '',
-        //         value: {
-        //             html : TRANS['delete'],
-        //             class: 'delete-card',
-        //             id   : card_index
-        //         }
-        //     });
-        // }
-
-        card_array.push([
-            TRANS['cards'] + ' / ' + LOCAL.cards[card_index].name,
-            '-',
-            detail_array
-        ]);
     }
 
-    // Currency record
-    for( var int_org in LOCAL.currency ) {
+    card_array.push([
+        TRANS['me'] + ' / ' + LOCAL.me.name,
+        '-',
+        detail_array
+    ]);
 
+    for( var contact_key in LOCAL.contacts ) {
         var detail_array = [];
 
-        for( var cur in LOCAL.currency[int_org] ) {
-
-            if( cur != 'date' && cur != 'server_date' ) {
-
+        for( var condata in LOCAL.contacts[contact_key] ) {
+            if(condata.match(/^field/)) {
                 detail_array.push({
-                    title: TRANS[cur] == undefined ? cur : TRANS[cur],
+                    title: TRANS[condata],
                     note : '',
-                    value: 'NTD$ ' + LOCAL.currency[int_org][cur].NTD
-                });
-
-            } else {
-
-                detail_array.push({
-                    title: cur,
-                    note : '',
-                    value: LOCAL.currency[int_org][cur] == null ? '-' : LOCAL.currency[int_org][cur]
+                    value: LOCAL.contacts[contact_key][condata].value == null ? '-' : LOCAL.contacts[contact_key][condata].value
                 });
 
             }
         }
 
         card_array.push([
-            TRANS['currency'] + ' / ' + int_org,
+            TRANS['contact'] + ' / ' + LOCAL.contacts[contact_key]['name'],
             '-',
             detail_array
         ]);
-
     }
-
     generator.cards(card_array, 'result');
 };
 
 $(function(){
 
     // Init
-    display_overview();
+    refresh_cards();
     refresh_decimal();
     addToHomescreen();
 
@@ -129,7 +80,7 @@ $(function(){
         if( confirm('確定要刪除卡片: ' + LOCAL.cards[index].name) ) {
             LOCAL.cards.splice(index, 1);
             storage_save();
-            display_overview();
+            refresh_cards();
         }
     });
 
@@ -140,12 +91,12 @@ $(function(){
 
     // Refresh Button
     $(document).on('click', '#app-refresh', function(){
-        refresh_currency(this);
+        refresh_contacts(this);
     });
 
     // Settings button
     $(document).on('click', '#app-settings', function() {
-        // $('#cash_currency_rate').val(LOCAL.currency.cash.EUR.NTD);
+        // $('#cash_contacts_rate').val(LOCAL.contacts.cash.EUR.NTD);
         // $('#decimal-flip').val(LOCAL.settings.decimal).slider('refresh');
     });
 
@@ -154,7 +105,7 @@ $(function(){
         if(confirm('請問是否要清除所有資料？在本地的資料將全部遺失，必須重新同步。')) {
             STORAGE.nuke();
             location.reload();
-            display_overview();
+            refresh_cards();
         }
     });
 
@@ -164,15 +115,6 @@ $(function(){
     //     storage_save();
     //     refresh_decimal();
     // });
-
-    // Save cash currency rate
-    $(document).on('input', '#cash_currency_rate', function() {
-        if( $(this).val() != '' ) {
-            LOCAL.currency.cash.EUR.NTD = parseFloat($(this).val());
-            storage_save();
-            display_overview();
-        }
-    });
 
     // Save popup
     $('#add-form').submit(function(event){
@@ -209,7 +151,7 @@ $(function(){
         storage_card_add(card_obj);
 
         // refresh
-        display_overview();
+        refresh_cards();
 
         $("#popupAdd").popup("close");
     });
@@ -218,13 +160,13 @@ $(function(){
     $('#inputbox').on('input', function(event){
 
         var base_value     = $('#inputbox').val(),
-            base_currency  = $('#base_currency').val(),
+            base_contacts  = $('#base_currency').val(),
             card_array     = [];
 
         //console.log(base_value.length);
 
         if( base_value == '' || base_value.length == 0 ) {
-            display_overview();
+            refresh_cards();
             return;
         }
 
