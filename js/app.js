@@ -34,7 +34,7 @@ var refresh_contacts = function() {
     }
 
     card_array.push([
-        TRANS['me'] + ' / ' + LOCAL.me.name,
+        '本人 / ' + LOCAL.me.name,
         '-',
         detail_array
     ]);
