@@ -1,29 +1,24 @@
 var TRANS = {
     me           : '本人',
     contact        : '聯絡人',
-    field_lastname  : '姓',
-    field_firstname  : '名',
-    field_phone : '電話號碼',
-    field_addressCountry    : 'Country',
-    field_addressZIP    : 'ZIP',
-    field_addressCity   : 'City',
-    field_addressTownship   : 'Township',
-    field_addressStreet : 'Street'
+    field_EmailType:'Email類型',
+    field_Email:'Email',
+    field_LastName  : '姓',
+    field_FirstName  : '名',
+    field_PhoneType: '電話類型',
+    field_Phone : '電話號碼',
+    field_Title : '職稱',
+    field_Company : '公司名稱',
+    field_AddressType: '地址類型',
+    field_AddressCountry    : 'Country',
+    field_AddressZIP    : 'ZIP',
+    field_AddressCity   : 'City',
+    field_AddressTownship   : 'Township',
+    field_AddressStreet : 'Street'
 };
 
-var refresh_decimal = function() {
 
-    if( LOCAL.settings.decimal == 'off' ) {
-        $('#inputbox').prop('step', '');
-        $('#inputbox').prop('pattern', '[0-9]*');
-    } else {
-        $('#inputbox').prop('step', 'any');
-        $('#inputbox').prop('pattern', '');
-    }
-
-};
-
-var refresh_cards = function() {
+var refresh_contacts = function() {
 
     var card_array   = [];
 
@@ -70,19 +65,8 @@ var refresh_cards = function() {
 $(function(){
 
     // Init
-    refresh_cards();
-    refresh_decimal();
+    refresh_contacts();
     addToHomescreen();
-
-    // Delete card
-    $(document).on('click', '.delete-card', function() {
-        var index = $(this).data('id');
-        if( confirm('確定要刪除卡片: ' + LOCAL.cards[index].name) ) {
-            LOCAL.cards.splice(index, 1);
-            storage_save();
-            refresh_cards();
-        }
-    });
 
     // Add popup close
     $('#add-cancel').click(function(){
@@ -91,7 +75,13 @@ $(function(){
 
     // Refresh Button
     $(document).on('click', '#app-refresh', function(){
-        refresh_contacts(this);
+        CheckNewAndDownload();
+        $("#popupSettings").popup( "close" );
+    });
+    // edit Button
+    $(document).on('click', '#app-edit', function(){
+        var editForm = document.getElementById('edit-form');
+        editForm.style.display = 'inline';
     });
 
     // Settings button
@@ -117,43 +107,218 @@ $(function(){
     // });
 
     // Save popup
-    $('#add-form').submit(function(event){
+
+    $('#edit-form').submit(function(event){
 
         event.preventDefault();
 
-        var form_data = $(this).serializeArray(),
-            card_obj  = {};
-
-        //console.log(form_data);
-
+        var form_data = $(this).serializeArray();
+        var toUpdate = [];
         for( var index in form_data ) {
-
-            if( form_data[index].name != 'name' && form_data[index].name != 'type' ) {
-                card_obj[form_data[index].name] = parseFloat(form_data[index].value);
-                if( isNaN(card_obj[form_data[index].name]) ) {
-                    return false;
-                }
+            if (form_data[index].value!=="" && !form_data[index].name.match(/field_.*Type/)) {
+                var fieldname = form_data[index].name.match(/(field_.*)/);
+                var file_id = LOCAL.me[fieldname[1]].id;
+                toUpdate.push({
+                    fieldname:fieldname[1],
+                    file_id:file_id,
+                    form_value:form_data[index].value
+                });
             }
-            else {
+        }
+        var count = 0;
+        for (var variableK in toUpdate) {
+            if (toUpdate.hasOwnProperty(variableK)) {
+                count++;
+                LOCAL.me[toUpdate[variableK].fieldname].value = toUpdate[variableK].form_value;
+                updateFile(
+                    toUpdate[variableK].file_id,
+                    "text/plain",
+                    toUpdate[variableK].form_value,
+                    function(file,fieldname){
 
-                card_obj[form_data[index].name] = form_data[index].value;
+                        if(count==toUpdate.length){
+                            console.log("done");
+                            var editForm = document.getElementById('edit-form');
+                            editForm.style.display = 'none';
+                            $("#popupSettings").popup( "close" );
+                            LOCAL.me.name = LOCAL.me.field_LastName.value + " " + LOCAL.me.field_FirstName.value;
+                            storage_save();
+                            refresh_contacts();
+                        }
+                    },
+                    fieldname
+                );
+            }
+        }
+    });
 
-                if( card_obj[form_data[index].name] == 'none' || card_obj[form_data[index].name] == '') {
-                    return false;
+    $('#add-form').submit(function(event){
+
+        var form_data = $(this).serializeArray();
+        var shareto = null;
+        var toDo = [];
+        for (var variable in form_data) {
+            if (form_data.hasOwnProperty(variable)) {
+                if(form_data[variable].name=="shareto"){
+                    shareto = form_data[variable].value;
+                    toDo.push("field_LastName");
+                    toDo.push("field_FirstName");
+                    toDo.push("field_Email");
+                    toDo.push("field_Phone");
+                }else if(form_data[variable].name=="ShareCompanyName"){
+                    toDo.push("field_Title");
+                    toDo.push("field_Company");
+
+                }else if(form_data[variable].name=="ShareAddress"){
+                    toDo.push("field_AddressZIP");
+                    toDo.push("field_AddressCountry");
+                    toDo.push("field_AddressCity");
+                    toDo.push("field_AddressStreet");
+                    toDo.push("field_AddressTownship");
                 }
-
             }
         }
 
-        //console.log(card_obj);
+        var counta = 0;
+        if ( toDo.length > 5) {
+            var i
+            for (i=0; i<5; i++) {
+                if (toDo.hasOwnProperty(i)) {
+                    field_name = toDo[i];
+                    shareFileTo(
+                        LOCAL.me[field_name].id,
+                        shareto,
+                        function(){
+                            counta++;
+                            if (counta == 5) {
+                                counta = 6;
+                                for (i=5; i<=toDo.length; i++) {
+                                    if (toDo.hasOwnProperty(i)) {
+                                        field_name = toDo[i];
+                                        shareFileTo(
+                                            LOCAL.me[field_name].id,
+                                            shareto,
+                                            function(){
+                                                counta++;
+                                                if (counta == toDo.length) {
+                                                    console.log("done!");
+                                                    $("#popupAdd").popup( "close" );
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    )
+                }
+            }
+        }else{
+            for (var variable in toDo) {
+                if (toDo.hasOwnProperty(variable)) {
+                    field_name = toDo[variable];
+                    shareFileTo(
+                        LOCAL.me[field_name].id,
+                        shareto,
+                        function(){
+                            counta++;
+                            console.log(counta);
+                            if (counta == toDo.length) {
+                                console.log("done!");
+                            }
+                        }
+                    )
+                }
+            }
+        }
 
-        // Add to LOCAL
-        storage_card_add(card_obj);
+        event.preventDefault();
+    });
+    $('#new-form').submit(function(event){
 
-        // refresh
-        refresh_cards();
 
-        $("#popupAdd").popup("close");
+
+        var form_data = $(this).serializeArray();
+
+        var ToDoForm = [];
+        for( var index in form_data ) {
+            ToDoForm[form_data[index].name] = form_data[index].value;
+        }
+        var MAILMD5 = CryptoJS.MD5(GDemail);
+
+        var FileNameI = [
+            'CardDrive_'+MAILMD5+'_AddressCity_'+ToDoForm["field_AddressType"],
+            'CardDrive_'+MAILMD5+'_AddressCountry_'+ToDoForm["field_AddressType"],
+            'CardDrive_'+MAILMD5+'_AddressStreet_'+ToDoForm["field_AddressType"],
+            'CardDrive_'+MAILMD5+'_AddressTownship_'+ToDoForm["field_AddressType"],
+            'CardDrive_'+MAILMD5+'_AddressZIP_'+ToDoForm["field_AddressType"],
+            'CardDrive_'+MAILMD5+'_Company',
+            'CardDrive_'+MAILMD5+'_FirstName',
+            'CardDrive_'+MAILMD5+'_LastName',
+            'CardDrive_'+MAILMD5+'_Title',
+            'CardDrive_'+MAILMD5+'_Phone_'+ToDoForm["field_PhoneType"],
+            'CardDrive_'+MAILMD5+'_Email_Home'
+        ];
+        var FileName = [];
+        FileName[0]=ToDoForm["field_AddressCity"];
+        FileName[1]=ToDoForm["field_AddressCountry"];
+        FileName[2]=ToDoForm["field_AddressStreet"];
+        FileName[3]=ToDoForm["field_AddressTownship"];
+        FileName[4]=ToDoForm["field_AddressZIP"];
+        FileName[5]=ToDoForm["field_Company"];
+        FileName[6]=ToDoForm["field_FirstName"];
+        FileName[7]=ToDoForm["field_LastName"];
+        FileName[8]=ToDoForm["field_Title"];
+        FileName[9]=ToDoForm["field_Phone"];
+        FileName[10]=GDemail;
+        var Cache = {
+            FT:{},
+            TF:{},
+            EN:{},
+            ignore:[]
+        };
+        Cache.EN[MAILMD5]=FileName[7] + " " + FileName[6];
+        var countDone = 0;
+        var i;
+        for (i = 0; i <= 4; i++) {
+            setTimeout((function (FileName,i) {
+                var FileNameK = FileNameI[i];
+                addFile(FileNameK, FileName[i], "text/plain",
+                    function(TargetFile,title){
+                        countDone++;
+                        Cache.TF[title]=TargetFile.id;
+                        Cache.FT[TargetFile.id]=title;
+                        if (countDone >= 5) {
+                            for (i = 5; i <= 10; i++) {
+                                setTimeout((function (FileName,i) {
+                                    var FileNameK = FileNameI[i];
+                                    addFile(FileNameK, FileName[i], "text/plain",
+                                        function(TargetFile,title){
+                                            countDone++;
+                                            Cache.TF[title]=TargetFile.id;
+                                            Cache.FT[TargetFile.id]=title;
+                                            if (countDone >= 11) {
+                                                var jsontosave = JSON.stringify(Cache);
+                                                addFile(
+                                                    'CardDrive_'+MAILMD5+'_Cache',
+                                                    jsontosave,
+                                                    "text/plain",
+                                                    function(){
+                                                        location.reload();
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    );
+                                })(FileName,i), 500*i+10000);
+                            }
+                        }
+                    }
+                );
+            })(FileName,i), 500*i+10000);
+        }
+
+        event.preventDefault();
     });
 
     // Calculate event
@@ -221,3 +386,22 @@ $(function(){
     });
 
 });
+function isEmpty(obj) {
+
+    // null and undefined are "empty"
+    if (obj == null) return true;
+
+    // Assume if it has a length property with a non-zero value
+    // that that property is correct.
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+
+    // Otherwise, does it have any properties of its own?
+    // Note that this doesn't handle
+    // toString and valueOf enumeration bugs in IE < 9
+    for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+    }
+
+    return true;
+}

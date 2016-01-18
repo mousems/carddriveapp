@@ -2,35 +2,56 @@ var LOCAL = {
     me:{
             // name: '郭杰穎',
             // email: 'mousems.kuo@gmail.com',
-            // field_lastname : {
+            // field_LastName : {
             //     value:'郭',
             //     id:''
             // },
-            // field_firstname : {
+            // field_FirstName : {
             //     value:'杰穎',
             //     id:''
             // },
-            // field_phone : {
+            // field_EmailType : {
+            //     value:'Home',
+            // },
+            // field_Email: {
+            //     value:'mousems.kuo@gmail.com',
+            //     id:''
+            // },
+            // field_PhoneType : {
+            //     value:'0975179763',
+            // },
+            // field_Phone : {
             //     value:'0975179763',
             //     id:''
             // },
-            // field_addressCountry : {
+            // field_Company : {
+            //     value:'KK',
+            //     id:''
+            // },
+            // field_Title : {
+            //     value:'CMO',
+            //     id:''
+            // },
+            // field_AddressType : {
+            //     value:'Home',
+            // },
+            // field_AddressCountry : {
             //     value:'Taiwan',
             //     id:''
             // },
-            // field_addressZIP : {
+            // field_AddressZIP : {
             //     value:'10699',
             //     id:''
             // },
-            // field_addressCity : {
+            // field_AddressCity : {
             //     value:'Taipei',
             //     id:''
             // },
-            // field_addressTownship : {
+            // field_AddressTownship : {
             //     value:'Daan',
             //     id:''
             // },
-            // field_addressStreet : {
+            // field_AddressStreet : {
             //     value:'P.OBOX 90-36',
             //     id:''
             // },
@@ -50,6 +71,14 @@ var LOCAL = {
         //     },
         //     field_phone : {
         //         value:'0975179763',
+        //         id:''
+        //     },
+        //     field_company : {
+        //         value:'KK',
+        //         id:''
+        //     },
+        //     field_title : {
+        //         value:'CMO',
         //         id:''
         //     },
         //     field_addressCountry : {
@@ -83,6 +112,7 @@ var LOCAL = {
     }
 };
 
+var Cache = null;
 var STORAGE = new LocalStorage(),
     get_tmp = STORAGE.get('LOCAL');
 
@@ -102,44 +132,6 @@ var storage_save = function() {
         console.log('Storage error!');
         console.log(e);
     }
-}
-
-var refresh_currency = function(btn_obj) {
-
-    var save;
-
-    $.ajax({
-         type: "get",
-         async: false,
-         url: "http://lost.ntust.edu.tw/upload/jsonp/",
-         dataType: "jsonp",
-         jsonp: "callback",
-         jsonpCallback: 'currency',
-         beforeSend: function() {
-
-            console.log('Retrieving currency data form API server...');
-            save = $(btn_obj).val();
-            $(btn_obj).val('Loading...');
-
-         },
-         success: function(res){
-
-             console.log('Got data from server');
-             console.log(res);
-             $(btn_obj).val(save);
-
-             LOCAL.currency.visa = res.visa;
-             LOCAL.currency.mastercard = res.mastercard;
-
-             storage_save();
-             display_overview();
-         },
-         error: function(err){
-             console.log('Error retrieving data');
-             console.log(err);
-             $(btn_obj).val('Error!');
-         }
-     });
 }
 
 $(function(){

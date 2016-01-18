@@ -34,7 +34,7 @@
 	<script src="js/app.js"></script>
 	<script src="js/app-gd.js"></script>
 	<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
-	
+
 	<script src="https://apis.google.com/js/client.js?onload=checkAuth">
     </script>
 </head>
@@ -54,10 +54,53 @@
 
 				<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 				<div style="padding:30px 40px 30px 40px;">
+					<form style="display: none; margin-top: -2em;" id="edit-form">
+					        <div style="padding:0px 20px 10px 20px;">
+					            <h3>修改資料</h3>
+								<p>不修改的資料請留空</p>
+								<button type="submit" id="edit-save" class="add-btn ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" style="width: 95%; margin-right: 0.5em;">儲存</button>
+
+								<label for="edit_field_LastName" class="ui-hidden-accessible">姓 LastName</label>
+					            <input type="text" name="edit_field_LastName" id="edit_field_LastName" placeholder="姓 LastName" data-theme="a">
+
+								<label for="edit_field_FirstName" class="ui-hidden-accessible">名 FirstName</label>
+					            <input type="text" name="edit_field_FirstName" id="edit_field_FirstName" placeholder="名 FirstName" data-theme="a">
+
+								<label for="edit_field_Company" class="ui-hidden-accessible">Company</label>
+					            <input type="text" name="edit_field_Company" id="edit_field_Company" placeholder="Company" data-theme="a">
+
+								<label for="edit_field_Title" class="ui-hidden-accessible">Title</label>
+					            <input type="text" name="edit_field_Title" id="edit_field_Title" placeholder="Title" data-theme="a">
+
+								<br />
+								<label for="edit_field_Phone" class="ui-hidden-accessible">Phone</label>
+								<select id="edit_field_PhoneType" name="edit_field_PhoneType" placeholder="Phone Type" data-theme="a">
+								  <option value="Mobile">Mobile</option>
+								  <option value="Home">Home</option>
+								  <option value="Work">Work</option>
+								</select>
+								<input type="text" name="edit_field_Phone" id="edit_field_Phone" placeholder="Phone" data-theme="a">
+
+								<br />
+
+								<select id="edit_field_AddressType" name="edit_field_AddressType" placeholder="Address Type" data-theme="a">
+								  <option value="Home">Home</option>
+								  <option value="Work">Work</option>
+								  <option value="Postal">Postal</option>
+								</select>
+								<input type="text" name="edit_field_AddressCountry" id="edit_field_AddressCountry" placeholder="Country" data-theme="a">
+								<input type="text" name="edit_field_AddressZIP" id="edit_field_AddressZIP" placeholder="ZIP" data-theme="a">
+								<input type="text" name="edit_field_AddressCity" id="edit_field_AddressCity" placeholder="City" data-theme="a">
+								<input type="text" name="edit_field_AddressTownship" id="edit_field_AddressTownship" placeholder="Township" data-theme="a">
+								<input type="text" name="edit_field_AddressStreet" id="edit_field_AddressStreet" placeholder="Street" data-theme="a">
+
+					        </div>
+					    </form>
 					<h3>設定</h3>
 					<button type="button" id="app-refresh" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-refresh">同步資料</button>
 					<br>
 					<button type="button" id="app-edit" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-refresh">修改個人資料</button>
+
 					<br>
 					<button type="button" id="app-clear" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-refresh">清除所有資料</button>
 
@@ -89,6 +132,54 @@
 			        </div>
 			    </form>
 			</div>
+
+
+
+			<div data-role="popup" id="popupNew" data-theme="a" class="ui-corner-all">
+			    <form style="margin-top: -2em;" id="new-form">
+			        <div style="padding:0px 20px 10px 20px;">
+			            <h3>填寫資料</h3>
+						<button type="submit" id="new-save" class="add-btn ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check" style="width: 95%; margin-right: 0.5em;">儲存</button>
+
+						<label for="field_LastName" class="ui-hidden-accessible">姓 LastName</label>
+			            <input type="text" name="field_LastName" id="field_LastName" placeholder="姓 LastName" data-theme="a" required="">
+
+						<label for="field_FirstName" class="ui-hidden-accessible">名 FirstName</label>
+			            <input type="text" name="field_FirstName" id="field_FirstName" placeholder="名 FirstName" data-theme="a" required="">
+
+						<label for="field_Company" class="ui-hidden-accessible">Company</label>
+			            <input type="text" name="field_Company" id="field_Company" placeholder="Company" data-theme="a" required="">
+
+						<label for="field_Title" class="ui-hidden-accessible">Title</label>
+			            <input type="text" name="field_Title" id="field_Title" placeholder="Title" data-theme="a" required="">
+
+						<br />
+						<label for="field_Phone" class="ui-hidden-accessible">Phone</label>
+						<select id="field_PhoneType" name="field_PhoneType" placeholder="Phone Type" data-theme="a" required="">
+						  <option value="Mobile">Mobile</option>
+						  <option value="Home">Home</option>
+						  <option value="Work">Work</option>
+						</select>
+						<input type="text" name="field_Phone" id="field_Phone" placeholder="Phone" data-theme="a" required="">
+
+						<br />
+
+						<select id="field_AddressType" name="field_AddressType" placeholder="Address Type" data-theme="a" required="">
+						  <option value="Home">Home</option>
+						  <option value="Work">Work</option>
+						  <option value="Postal">Postal</option>
+
+						</select>
+						<input type="text" name="field_AddressCountry" id="field_AddressCountry" placeholder="Country" data-theme="a" required="">
+						<input type="text" name="field_AddressZIP" id="field_AddressZIP" placeholder="ZIP" data-theme="a" required="">
+						<input type="text" name="field_AddressCity" id="field_AddressCity" placeholder="City" data-theme="a" required="">
+						<input type="text" name="field_AddressTownship" id="field_AddressTownship" placeholder="Township" data-theme="a" required="">
+						<input type="text" name="field_AddressStreet" id="field_AddressStreet" placeholder="Street" data-theme="a" required="">
+
+			        </div>
+			    </form>
+			</div>
+
     	</div><!-- /header -->
 
     	<div role="main" class="ui-content">
